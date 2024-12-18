@@ -103,7 +103,6 @@ class CalculatorApp(ft.Container):
                             text="=", button_clicked=self.button_clicked, action="calculate"),
                     ]
                 ),
-                # Add Exponentiation button (^)
                 ft.Row(
                     expand=True,
                     controls=[
