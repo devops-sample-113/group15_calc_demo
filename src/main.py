@@ -4,7 +4,6 @@ from buttons import DigitButton, OperatorButton, ActionButton
 
 
 class CalculatorApp(ft.Container):
-    # application's root control (i.e. "view") containing all other controls
     def __init__(self):
         super().__init__()
         self.reset()
@@ -29,7 +28,6 @@ class CalculatorApp(ft.Container):
                 ft.Row(
                     expand=True,
                     controls=[
-
                         ActionButton(
                             text="AC",
                             button_clicked=self.button_clicked,
@@ -45,7 +43,6 @@ class CalculatorApp(ft.Container):
                             button_clicked=self.button_clicked,
                             action="percent",
                         ),
-
                         OperatorButton(
                             text="÷",
                             button_clicked=self.button_clicked,
@@ -106,6 +103,14 @@ class CalculatorApp(ft.Container):
                             text="=", button_clicked=self.button_clicked, action="calculate"),
                     ]
                 ),
+                # Add Exponentiation button (^)
+                ft.Row(
+                    expand=True,
+                    controls=[
+                        OperatorButton(
+                            text="^", button_clicked=self.button_clicked, operations="pow"),
+                    ]
+                ),
             ]
         )
         return ui
@@ -129,23 +134,25 @@ class CalculatorApp(ft.Container):
             self.new_operand = False
         else:
             self.result.value = self.result.value + str(value)
-        pass
 
     def operator_button_clicked(self, e):
         self.operator = e.control.operations
         if self.operand1 != 0:
-            self.result.value = self.format_number(
-                self.calculate(
-                    self.operand1, float(self.result.value), self.operator
+            if self.operator == "pow":  # Exponentiation operator
+                self.result.value = self.format_number(
+                    self.operand1 ** float(self.result.value)
                 )
-            )
+            else:
+                self.result.value = self.format_number(
+                    self.calculate(
+                        self.operand1, float(self.result.value), self.operator
+                    )
+                )
         if self.result.value == "Error":
             self.operand1 = "0"
         else:
             self.operand1 = float(self.result.value)
         self.new_operand = True
-
-        pass
 
     def action_button_clicked(self, e):
         action = e.control.action
@@ -155,7 +162,7 @@ class CalculatorApp(ft.Container):
         elif action == "negate":
             self.result.value = str(
                 self.format_number(
-                    -1*float(self.result.value)
+                    -1 * float(self.result.value)
                 )
             )
         elif action == "percent":
@@ -185,23 +192,26 @@ class CalculatorApp(ft.Container):
         else:
             return num
 
-    def format_number(self, num):
-        try:
-            if isinstance(num, (int, float)):
-                if num % 1 == 0:
-                    return int(num)
-                else:
-                    return num
-            else:
-                return num
-        except Exception as e:
-            print(f"Error formatting number: {e}")
-            return "Error"
-
     def reset(self):
         self.operator = "+"
         self.operand1 = 0
         self.new_operand = True
+
+
+class Calculator:
+    def calculate(self, operand1, operand2, operator):
+        if operator == "add":
+            return operand1 + operand2
+        elif operator == "sub":
+            return operand1 - operand2
+        elif operator == "mul":
+            return operand1 * operand2
+        elif operator == "div":
+            return operand1 / operand2
+        elif operator == "pow":  # Exponentiation operator
+            return operand1 ** operand2
+        else:
+            return "Error"
 
 
 def main(page: ft.Page):
